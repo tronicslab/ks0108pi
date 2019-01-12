@@ -26,7 +26,7 @@ Ks0108pi::Ks0108pi(void)
 int Ks0108pi::init(void)
 {
 	if (!bcm2835_init()){
-		printf("Falha ao iniciar bcm2835...\n");
+		printf("Failed to load bcm2835...\n");
 		return 1;
 	}
 
@@ -35,7 +35,7 @@ int Ks0108pi::init(void)
 	Ks0108pi::PIN_EN = 11;
 	Ks0108pi::PIN_CS1 = 25;
 	Ks0108pi::PIN_CS2 = 8;
-	Ks0108pi::PIN_CS3 = 9;
+	//Ks0108pi::PIN_CS3 = 9;
 	Ks0108pi::PIN_D0 = 2;
 	Ks0108pi::PIN_D1 = 3;
 	Ks0108pi::PIN_D2 = 4;
@@ -74,7 +74,7 @@ int Ks0108pi::init(void)
 	framebuffer = new uint8_t[framebuffer_size];
 	std::fill_n(framebuffer,framebuffer_size, 0);
 
-	printf("Iniciou bcm2835...\n");
+	printf("Started bcm2835...\n");
 	return 0;
 }
 
@@ -156,7 +156,8 @@ void Ks0108pi::enableController(uint8_t controller)
 	switch(controller){
 		case 0 : bcm2835_gpio_write(PIN_CS1, HIGH); break;
 		case 1 : bcm2835_gpio_write(PIN_CS2, HIGH); break;
-		case 2 : bcm2835_gpio_write(PIN_CS3, HIGH); break;
+		//case 2 : bcm2835_gpio_write(PIN_CS3, HIGH); break;
+		default: break;
 	}
 }
 //-------------------------------------------------------------------------------------------------
@@ -167,7 +168,8 @@ void Ks0108pi::disableController(uint8_t controller)
 	switch(controller){
 		case 0 : bcm2835_gpio_write(PIN_CS1, LOW); break;
 		case 1 : bcm2835_gpio_write(PIN_CS2, LOW); break;
-		case 2 : bcm2835_gpio_write(PIN_CS3, LOW); break;
+		//case 2 : bcm2835_gpio_write(PIN_CS3, LOW); break;
+		default: break;
 	}
 }
 

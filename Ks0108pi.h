@@ -26,7 +26,7 @@ private:
 	uint8_t PIN_EN;
 	uint8_t PIN_CS1;
 	uint8_t PIN_CS2;
-	uint8_t PIN_CS3;
+	//uint8_t PIN_CS3;
 	uint8_t PIN_D0;
 	uint8_t PIN_D1;
 	uint8_t PIN_D2;
