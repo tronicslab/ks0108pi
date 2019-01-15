@@ -10,8 +10,6 @@
 #include "Ks0108pi.h"
 
 
-
-
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
@@ -35,7 +33,6 @@ int Ks0108pi::init(void)
 	Ks0108pi::PIN_EN = 11;
 	Ks0108pi::PIN_CS1 = 25;
 	Ks0108pi::PIN_CS2 = 8;
-	//Ks0108pi::PIN_CS3 = 9;
 	Ks0108pi::PIN_D0 = 2;
 	Ks0108pi::PIN_D1 = 3;
 	Ks0108pi::PIN_D2 = 4;
@@ -66,10 +63,10 @@ int Ks0108pi::init(void)
 	bcm2835_gpio_fsel(PIN_D7, 	BCM2835_GPIO_FSEL_OUTP);
 
 	// initialize controllers
-	for(int i = 0; i < 3; i++)
+	for(int i = 0; i < 2; i++)
 		writeCommand((DISPLAY_ON_CMD | ON), i);
 
-	//
+	// initialize frame buffer and clearout with 0's
 	framebuffer_size = (SCREEN_WIDTH * SCREEN_HEIGHT)/8;
 	framebuffer = new uint8_t[framebuffer_size];
 	std::fill_n(framebuffer,framebuffer_size, 0);
@@ -110,7 +107,7 @@ void Ks0108pi::putData(uint8_t data)
 }
 
 //-------------------------------------------------------------------------------------------------
-// Write data to current position
+// Write data to current position. Low level write to single pixel
 //-------------------------------------------------------------------------------------------------
 void Ks0108pi::writeData(uint8_t dataToWrite)
 {
@@ -149,32 +146,25 @@ void Ks0108pi::lcdDelay(void)
 }
 
 //-------------------------------------------------------------------------------------------------
-// Enalbe Controller (0-2)
+// Enable/Disable Controller (0-1) - screen controlled by 2 64x64 pixel drivers
 //-------------------------------------------------------------------------------------------------
 void Ks0108pi::enableController(uint8_t controller)
 {
 	switch(controller){
 		case 0 : bcm2835_gpio_write(PIN_CS1, HIGH); break;
 		case 1 : bcm2835_gpio_write(PIN_CS2, HIGH); break;
-		//case 2 : bcm2835_gpio_write(PIN_CS3, HIGH); break;
 		default: break;
 	}
 }
-//-------------------------------------------------------------------------------------------------
-// Disable Controller (0-2)
-//-------------------------------------------------------------------------------------------------
+
 void Ks0108pi::disableController(uint8_t controller)
 {
 	switch(controller){
 		case 0 : bcm2835_gpio_write(PIN_CS1, LOW); break;
 		case 1 : bcm2835_gpio_write(PIN_CS2, LOW); break;
-		//case 2 : bcm2835_gpio_write(PIN_CS3, LOW); break;
 		default: break;
 	}
 }
-
-
-
 
 //-------------------------------------------------------------------------------------------------
 //
