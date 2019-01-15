@@ -9,17 +9,17 @@
 #include <math.h>
 #include <algorithm>
 
-class Ks0108pi
-{
+class Ks0108pi {
+
 private:
 
 	// static ks0108 commands
-	static const uint8_t DISPLAY_SET_Y = 0x40;
-	static const uint8_t DISPLAY_SET_X = 0xB8;
+	static const uint8_t DISPLAY_SET_Y 			= 0x40;
+	static const uint8_t DISPLAY_SET_X 			= 0xB8;
 	static const uint8_t DISPLAY_START_LINE = 0xC0;
-	static const uint8_t DISPLAY_ON_CMD = 0x3E;
-	static const uint8_t ON = 0x01;
-	static const uint8_t OFF = 0x00;
+	static const uint8_t DISPLAY_ON_CMD 		= 0x3E;
+	static const uint8_t ON 								= 0x01;
+	static const uint8_t OFF 								= 0x00;
 
 	// pins
 	uint8_t PIN_RS;
@@ -42,14 +42,14 @@ private:
 	uint8_t *framebuffer;
 	int framebuffer_size;
 
-	// methods
-	void goTo(uint8_t , uint8_t );
-	void putData(uint8_t);
-	void writeData(uint8_t );
-	void writeCommand(uint8_t , uint8_t );
+	// private methods
+	void goTo(uint8_t x, uint8_t y);
+	void putData(uint8_t data);
+	void writeData(uint8_t dataToWrite);
+	void writeCommand(uint8_t commandToWrite, uint8_t controller);
 	void lcdDelay();
-	void enableController(uint8_t);
-	void disableController(uint8_t);
+	void enableController(uint8_t controller);
+	void disableController(uint8_t controller);
 
 
 public:
@@ -64,24 +64,24 @@ public:
 	};
 
 	Ks0108pi();
-	int init();
+	void init();
 	void clearScreen();
 	void clearBuffer();
 	void syncBuffer();
-	void wait(unsigned int);
+	void wait(unsigned int millis);
 
-	void setPixel(uint8_t , uint8_t);
-	void clearPixel(uint8_t , uint8_t);
-	void setPixels(uint8_t , uint8_t, uint8_t);
+	void setPixel(uint8_t x, uint8_t y);
+	void clearPixel(uint8_t x, uint8_t y);
+	void setPixels(uint8_t x, uint8_t y, uint8_t byte);
 
-	void drawRect(uint8_t , uint8_t , uint8_t , uint8_t, uint8_t);
+	void drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t style);
 
-	void drawLine(uint8_t , uint8_t , uint8_t , uint8_t);
+	void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 
-	void writeChar(uint8_t, uint8_t, char , uint8_t* );
-	void writeString(uint8_t, uint8_t, char *, uint8_t* );
+	void writeChar(uint8_t x, uint8_t y, char charToWrite, uint8_t* font);
+	void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font);
 
-	void shiftBufferHorizontal(int);
+	void shiftBufferHorizontal(int x);
 };
 
 #endif // __KS0108PI_H_INCLUDED__

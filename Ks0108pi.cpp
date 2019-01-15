@@ -21,13 +21,8 @@ Ks0108pi::Ks0108pi(void)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-int Ks0108pi::init(void)
+void Ks0108pi::init(void)
 {
-	if (!bcm2835_init()){
-		printf("Failed to load bcm2835...\n");
-		return 1;
-	}
-
 	// pins
 	Ks0108pi::PIN_RS = 7;
 	Ks0108pi::PIN_EN = 11;
@@ -70,9 +65,6 @@ int Ks0108pi::init(void)
 	framebuffer_size = (SCREEN_WIDTH * SCREEN_HEIGHT)/8;
 	framebuffer = new uint8_t[framebuffer_size];
 	std::fill_n(framebuffer,framebuffer_size, 0);
-
-	printf("Started bcm2835...\n");
-	return 0;
 }
 
 
@@ -94,6 +86,9 @@ void Ks0108pi::goTo(uint8_t x, uint8_t y)
 	writeCommand(DISPLAY_SET_X | y, (x / 64));
 }
 
+//-------------------------------------------------------------------------------------------------
+//	Write 1 byte of date out to the data pins D0-D7
+//-------------------------------------------------------------------------------------------------
 void Ks0108pi::putData(uint8_t data)
 {
 	bcm2835_gpio_write(PIN_D0, (data >> 0) & 1 ) ;

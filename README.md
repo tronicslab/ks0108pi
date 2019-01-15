@@ -3,7 +3,7 @@ This is a C/C++ library/driver for the popular ks0108 lcd graphic ( 128x64 ) dis
 
 DISCLAIMER: WORK IN PROGRESS!
 
- Pin manipulation is done with BCM 2835 library by Mike McCauley.
+Pin manipulation is done with BCM 2835 library by Mike McCauley.
 This is the only aditional library required for this to work.
 ( more info: http://www.airspayce.com/mikem/bcm2835/ )
 

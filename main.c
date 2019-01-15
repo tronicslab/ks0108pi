@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "Ks0108pi.h"
+#include "GaragePi.h"
 //
 #include "fonts/metric01.h"
 #include "fonts/metric02.h"
