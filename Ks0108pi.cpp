@@ -64,7 +64,8 @@ void Ks0108pi::init(void)
 	// initialize frame buffer and clearout with 0's
 	framebuffer_size = (SCREEN_WIDTH * SCREEN_HEIGHT)/8;
 	framebuffer = new uint8_t[framebuffer_size];
-	std::fill_n(framebuffer,framebuffer_size, 0);
+	memset(framebuffer, 0, framebuffer_size);
+	//std::fill_n(framebuffer,framebuffer_size, 0);
 }
 
 
@@ -176,7 +177,8 @@ void Ks0108pi::clearScreen()
 //-------------------------------------------------------------------------------------------------
 void Ks0108pi::clearBuffer()
 {
-	std::fill_n(framebuffer,framebuffer_size, 0);
+	memset(framebuffer, 0, framebuffer_size);
+	//std::fill_n(framebuffer,framebuffer_size, 0);
 }
 
 //-------------------------------------------------------------------------------------------------
