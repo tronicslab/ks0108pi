@@ -9,53 +9,44 @@
 
 #include "Ks0108pi.h"
 
-
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-Ks0108pi::Ks0108pi(void)
-{
-
-}
-
-//-------------------------------------------------------------------------------------------------
-//
-//-------------------------------------------------------------------------------------------------
-void Ks0108pi::init(void)
+void init(void)
 {
 	// pins
-	Ks0108pi::PIN_RS = 7;
-	Ks0108pi::PIN_EN = 11;
-	Ks0108pi::PIN_CS1 = 25;
-	Ks0108pi::PIN_CS2 = 8;
-	Ks0108pi::PIN_D0 = 2;
-	Ks0108pi::PIN_D1 = 3;
-	Ks0108pi::PIN_D2 = 4;
-	Ks0108pi::PIN_D3 = 17;
-	Ks0108pi::PIN_D4 = 27;
-	Ks0108pi::PIN_D5 = 22;
-	Ks0108pi::PIN_D6 = 10;
-	Ks0108pi::PIN_D7 = 9;
+	PIN_RS  = 7;
+	PIN_EN  = 11;
+	PIN_CS1 = 25;
+	PIN_CS2 = 8;
+	PIN_D0  = 2;
+	PIN_D1  = 3;
+	PIN_D2  = 4;
+	PIN_D3  = 17;
+	PIN_D4  = 27;
+	PIN_D5  = 22;
+	PIN_D6  = 10;
+	PIN_D7  = 9;
 	// other
-	Ks0108pi::screen_x=0;
-	Ks0108pi::screen_y=0;
-	Ks0108pi::SCREEN_WIDTH = 128;
-	Ks0108pi::SCREEN_HEIGHT = 64;
+	screen_x = 0;
+	screen_y = 0;
+	SCREEN_WIDTH  = 128;
+	SCREEN_HEIGHT = 64;
 
 	//sets all pins as output
-	bcm2835_gpio_fsel(PIN_EN, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_RS, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_CS1, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_CS2,	BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_EN,  BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_RS,  BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_CS1, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_CS2, BCM2835_GPIO_FSEL_OUTP);
 
-	bcm2835_gpio_fsel(PIN_D0, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D1, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D2, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D3, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D4, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D5, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D6, 	BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D7, 	BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D0, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D1, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D2, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D3, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D4, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D5, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D6, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(PIN_D7, BCM2835_GPIO_FSEL_OUTP);
 
 	// initialize controllers
 	for(int i = 0; i < 2; i++)
@@ -63,7 +54,7 @@ void Ks0108pi::init(void)
 
 	// initialize frame buffer and clearout with 0's
 	framebuffer_size = (SCREEN_WIDTH * SCREEN_HEIGHT)/8;
-	framebuffer = new uint8_t[framebuffer_size];
+	framebuffer = new uint8_t[framebuffer_size];			// new? not c?
 	memset(framebuffer, 0, framebuffer_size);
 	//std::fill_n(framebuffer,framebuffer_size, 0);
 }
@@ -72,7 +63,7 @@ void Ks0108pi::init(void)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::goTo(uint8_t x, uint8_t y)
+void goTo(uint8_t x, uint8_t y)
 {
 	uint8_t i;
 	screen_x = x;
@@ -90,7 +81,7 @@ void Ks0108pi::goTo(uint8_t x, uint8_t y)
 //-------------------------------------------------------------------------------------------------
 //	Write 1 byte of date out to the data pins D0-D7
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::putData(uint8_t data)
+void putData(uint8_t data)
 {
 	bcm2835_gpio_write(PIN_D0, (data >> 0) & 1 ) ;
 	bcm2835_gpio_write(PIN_D1, (data >> 1) & 1 ) ;
@@ -105,7 +96,7 @@ void Ks0108pi::putData(uint8_t data)
 //-------------------------------------------------------------------------------------------------
 // Write data to current position. Low level write to single pixel
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::writeData(uint8_t dataToWrite)
+void writeData(uint8_t dataToWrite)
 {
 	lcdDelay();
 	bcm2835_gpio_write(PIN_RS, HIGH);
@@ -121,7 +112,7 @@ void Ks0108pi::writeData(uint8_t dataToWrite)
 //-------------------------------------------------------------------------------------------------
 // Write command to specified controller
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::writeCommand(uint8_t commandToWrite, uint8_t controller)
+void writeCommand(uint8_t commandToWrite, uint8_t controller)
 {
 	lcdDelay();
 	bcm2835_gpio_write(PIN_RS, LOW);
@@ -136,7 +127,7 @@ void Ks0108pi::writeCommand(uint8_t commandToWrite, uint8_t controller)
 //-------------------------------------------------------------------------------------------------
 // lcdDelay function
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::lcdDelay(void)
+void lcdDelay(void)
 {
 	bcm2835_delayMicroseconds(3);
 }
@@ -144,7 +135,7 @@ void Ks0108pi::lcdDelay(void)
 //-------------------------------------------------------------------------------------------------
 // Enable/Disable Controller (0-1) - screen controlled by 2 64x64 pixel drivers
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::enableController(uint8_t controller)
+void enableController(uint8_t controller)
 {
 	switch(controller){
 		case 0 : bcm2835_gpio_write(PIN_CS1, HIGH); break;
@@ -153,7 +144,7 @@ void Ks0108pi::enableController(uint8_t controller)
 	}
 }
 
-void Ks0108pi::disableController(uint8_t controller)
+void disableController(uint8_t controller)
 {
 	switch(controller){
 		case 0 : bcm2835_gpio_write(PIN_CS1, LOW); break;
@@ -165,7 +156,7 @@ void Ks0108pi::disableController(uint8_t controller)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::clearScreen()
+void clearScreen()
 {
 	clearBuffer();
 	syncBuffer();
@@ -175,7 +166,7 @@ void Ks0108pi::clearScreen()
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::clearBuffer()
+void clearBuffer()
 {
 	memset(framebuffer, 0, framebuffer_size);
 	//std::fill_n(framebuffer,framebuffer_size, 0);
@@ -184,7 +175,7 @@ void Ks0108pi::clearBuffer()
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::syncBuffer()
+void syncBuffer()
 {
 	uint8_t i, j;
 	int counter = 0;
@@ -199,7 +190,7 @@ void Ks0108pi::syncBuffer()
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::wait(unsigned int millis)
+void wait(unsigned int millis)
 {
 	bcm2835_delay(millis);
 }
@@ -208,7 +199,7 @@ void Ks0108pi::wait(unsigned int millis)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::setPixel(uint8_t x, uint8_t y)
+void setPixel(uint8_t x, uint8_t y)
 {
 	int idx = (SCREEN_WIDTH * (y/8)) + x;
 	framebuffer[idx] |= 1 << y%8;
@@ -217,7 +208,7 @@ void Ks0108pi::setPixel(uint8_t x, uint8_t y)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::clearPixel(uint8_t x, uint8_t y)
+void clearPixel(uint8_t x, uint8_t y)
 {
 	int idx = (SCREEN_WIDTH * (y/8)) + x;
 	framebuffer[idx] &= ~(1 << y%8);
@@ -226,7 +217,7 @@ void Ks0108pi::clearPixel(uint8_t x, uint8_t y)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::setPixels(uint8_t x, uint8_t y, uint8_t byte)
+void setPixels(uint8_t x, uint8_t y, uint8_t byte)
 {
 	int idx = (SCREEN_WIDTH * (y/8)) + x;
 	int idx2 = (SCREEN_WIDTH * ( (y/8)+1) ) + x;
@@ -239,7 +230,7 @@ void Ks0108pi::setPixels(uint8_t x, uint8_t y, uint8_t byte)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t style){
+void drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t style){
 	for(int nx=x; nx < (x+w) ; nx++){
 		for(int ny=y; ny < (y+h) ; ny++){
 			if(style & STYLE_BLACK_BG) setPixel(nx,ny);
@@ -265,12 +256,12 @@ void Ks0108pi::drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t styl
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
+void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
 	int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
 	int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
-	int err = (dx>dy ? dx : -dy)/2, e2;
+	int err = (dx>dy ? dx : -dy)/2, e2;		// improve readability e2
 
-	for(;;){
+	for(;;){			// improve this?
 		setPixel(x0,y0);
 		if (x0==x1 && y0==y1) break;
 		e2 = err;
@@ -283,7 +274,7 @@ void Ks0108pi::drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::writeChar(uint8_t x, uint8_t y, char charToWrite, uint8_t* font)
+void writeChar(uint8_t x, uint8_t y, char charToWrite, uint8_t* font)
 {
 	int firstChar = font[4];
 	int charCount = font[5];
@@ -325,7 +316,7 @@ void Ks0108pi::writeChar(uint8_t x, uint8_t y, char charToWrite, uint8_t* font)
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void Ks0108pi::writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font)
+void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font)
 {
 	while(*stringToWrite){
 		writeChar(x,y,*stringToWrite++, font);
@@ -333,13 +324,13 @@ void Ks0108pi::writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* 
 	}
 }
 
-void Ks0108pi::shiftBufferHorizontal(int x)
+void shiftBufferHorizontal(int x)
 {
-	uint8_t *originalfb = new uint8_t[framebuffer_size];
+	uint8_t *originalfb = new uint8_t[framebuffer_size];	// NEW? not C?
 
 	//backup of current framebuffer
-	std::copy(framebuffer, framebuffer+framebuffer_size, originalfb);
-	this->clearBuffer();
+	std::copy(framebuffer, framebuffer+framebuffer_size, originalfb); // *** find C equivalent
+	this->clearBuffer(); // *** update without THIS
 
 	int x_original;
 	int x_new;
@@ -353,7 +344,7 @@ void Ks0108pi::shiftBufferHorizontal(int x)
 		x_new = x < 0 ? 0 : x ;
 		while(x_original < SCREEN_WIDTH && x_new < SCREEN_WIDTH)
 		{
-			this->setPixels(x_new, y*8, originalfb[ (y*SCREEN_WIDTH) + x_original ] );
+			this->setPixels(x_new, y*8, originalfb[ (y*SCREEN_WIDTH) + x_original ] );	// *** Update to remove THIS
 			x_original ++;
 			x_new ++;
 		}
