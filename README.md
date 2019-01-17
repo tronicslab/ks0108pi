@@ -1,5 +1,5 @@
 # KS0108 LCD Raspberry Pi
-This is a C/C++ library/driver for the popular ks0108 lcd graphic ( 128x64 ) displays.
+This is a C library/driver for the popular ks0108 lcd graphic ( 128x64 ) displays.
 
 DISCLAIMER: WORK IN PROGRESS!
 
