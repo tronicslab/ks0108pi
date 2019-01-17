@@ -17,12 +17,6 @@
 #include <math.h>
 #define PI 3.14159265
 
-	Ks0108pi myLCD = {
-		0x40, 0xB8, 0xC0, 		// DISPLAY_SET_Y, DISPLAY_SET_X, DISPLAY_START_LINE, 
-		0x3E, 0x01, 0x00, 		// DISPLAY_ON_CMD, ON, OFF,
-		128, 64 							// SCREEN_WIDTH, SCREEN_HEIGHT
-	};
-
 int main(int argc, char** argv){
 	Ks0108pi *kspi = new Ks0108pi();
 	kspi->init();
