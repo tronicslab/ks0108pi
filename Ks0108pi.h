@@ -50,30 +50,30 @@ enum DrawStyle {
 	STYLE_BLACK_BORDER = 1 << 4,
 };
 
-void goTo(uint8_t x, uint8_t y);
-void putData(uint8_t data);
-void writeData(uint8_t dataToWrite);
-void writeCommand(uint8_t commandToWrite, uint8_t controller);
+void goTo(uint8_t x, uint8_t y, Ks0108pi *myLCD);
+void putData(uint8_t data, Ks0108pi *myLCD);
+void writeData(uint8_t dataToWrite, Ks0108pi *myLCD);
+void writeCommand(uint8_t commandToWrite, uint8_t controller, Ks0108pi *myLCD);
 void lcdDelay();
-void enableController(uint8_t controller);
-void disableController(uint8_t controller);
+void enableController(uint8_t controller, Ks0108pi *myLCD);
+void disableController(uint8_t controller, Ks0108pi *myLCD);
 
-Ks0108pi * init();
-void clearScreen();
-void clearBuffer();
-void syncBuffer();
+int init(Ks0108pi *myLCD);
+void clearScreen(Ks0108pi *myLCD);
+void clearBuffer(Ks0108pi *myLCD);
+void syncBuffer(Ks0108pi *myLCD);
 void wait(unsigned int millis);
 
-void setPixel(uint8_t x, uint8_t y);
-void clearPixel(uint8_t x, uint8_t y);
-void setPixels(uint8_t x, uint8_t y, uint8_t byte);
+void setPixel(uint8_t x, uint8_t y, Ks0108pi *myLCD);
+void clearPixel(uint8_t x, uint8_t y, Ks0108pi *myLCD);
+void setPixels(uint8_t x, uint8_t y, uint8_t byte, Ks0108pi *myLCD);
 
-void drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t style);
-void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
+void drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t style, Ks0108pi *myLCD);
+void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1, Ks0108pi *myLCD);
 
-void writeChar(uint8_t x, uint8_t y, char charToWrite, uint8_t* font);
-void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font);
+void writeChar(uint8_t x, uint8_t y, char charToWrite, uint8_t* font, Ks0108pi *myLCD);
+void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font, Ks0108pi *myLCD);
 
-void shiftBufferHorizontal(int x);
+void shiftBufferHorizontal(int x, Ks0108pi *myLCD);
 
 #endif // __KS0108PI_H_INCLUDED__
