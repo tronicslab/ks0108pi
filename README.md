@@ -15,25 +15,25 @@ The following functions already work but need further testing:
   - Draw filled rect
   - Draw char / string
 
- Pinout is hardcoded and can be changed inside the Ks0108pi::init() function.
+ Pinout is hardcoded and can be changed inside the init() function.
 The pin numbers dont represent the board phisical numbering, but the GPIO-pin format
 ( more info: http://elinux.org/images/5/5c/Pi-GPIO-header.png )
 
 Current values are:
 
-- Ks0108pi::PIN_RS = 7;
-- Ks0108pi::PIN_EN = 11;
-- Ks0108pi::PIN_CS1 = 25;
-- Ks0108pi::PIN_CS2 = 8;
-- Ks0108pi::PIN_CS3 = 9;
-- Ks0108pi::PIN_D0 = 2;
-- Ks0108pi::PIN_D1 = 3;
-- Ks0108pi::PIN_D2 = 4;
-- Ks0108pi::PIN_D3 = 17;
-- Ks0108pi::PIN_D4 = 27;
-- Ks0108pi::PIN_D5 = 22;
-- Ks0108pi::PIN_D6 = 10;
-- Ks0108pi::PIN_D7 = 9;
+- Ks0108pi.PIN_RS  = 7;
+- Ks0108pi.PIN_EN  = 11;
+- Ks0108pi.PIN_CS1 = 25;
+- Ks0108pi.PIN_CS2 = 8;
+- Ks0108pi.PIN_CS3 = 9;
+- Ks0108pi.PIN_D0  = 2;
+- Ks0108pi.PIN_D1  = 3;
+- Ks0108pi.PIN_D2  = 4;
+- Ks0108pi.PIN_D3  = 17;
+- Ks0108pi.PIN_D4  = 27;
+- Ks0108pi.PIN_D5  = 22;
+- Ks0108pi.PIN_D6  = 10;
+- Ks0108pi.PIN_D7  = 9;
 
 More observations:	
   - the main.c file contains some examples.
