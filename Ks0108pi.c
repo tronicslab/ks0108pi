@@ -12,51 +12,59 @@
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void init(void)
+Ks0108pi * init()
 {
-	// pins
-	PIN_RS  = 7;
-	PIN_EN  = 11;
-	PIN_CS1 = 25;
-	PIN_CS2 = 8;
-	PIN_D0  = 2;
-	PIN_D1  = 3;
-	PIN_D2  = 4;
-	PIN_D3  = 17;
-	PIN_D4  = 27;
-	PIN_D5  = 22;
-	PIN_D6  = 10;
-	PIN_D7  = 9;
+
+	Ks0108pi myLCD = {
+		0x40, 0xB8, 0xC0, 		// DISPLAY_SET_Y, DISPLAY_SET_X, DISPLAY_START_LINE, 
+		0x3E, 0x01, 0x00, 		// DISPLAY_ON_CMD, ON, OFF,
+		128, 64 							// SCREEN_WIDTH, SCREEN_HEIGHT
+	};
+
+
+	// LCD pins
+	myLCD.PIN_RS  = 7;
+	myLCD.PIN_EN  = 11;
+	myLCD.PIN_CS1 = 25;
+	myLCD.PIN_CS2 = 8;
+	myLCD.PIN_D0  = 2;
+	myLCD.PIN_D1  = 3;
+	myLCD.PIN_D2  = 4;
+	myLCD.PIN_D3  = 17;
+	myLCD.PIN_D4  = 27;
+	myLCD.PIN_D5  = 22;
+	myLCD.PIN_D6  = 10;
+	myLCD.PIN_D7  = 9;
+	
 	// other
-	screen_x = 0;
-	screen_y = 0;
-	SCREEN_WIDTH  = 128;
-	SCREEN_HEIGHT = 64;
-
+	myLCD.screen_x = 0;
+	myLCD.screen_y = 0;
+	
 	//sets all pins as output
-	bcm2835_gpio_fsel(PIN_EN,  BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_RS,  BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_CS1, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_CS2, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_EN,  BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_RS,  BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_CS1, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_CS2, BCM2835_GPIO_FSEL_OUTP);
 
-	bcm2835_gpio_fsel(PIN_D0, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D1, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D2, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D3, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D4, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D5, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D6, BCM2835_GPIO_FSEL_OUTP);
-	bcm2835_gpio_fsel(PIN_D7, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D0, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D1, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D2, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D3, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D4, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D5, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D6, BCM2835_GPIO_FSEL_OUTP);
+	bcm2835_gpio_fsel(myLCD.PIN_D7, BCM2835_GPIO_FSEL_OUTP);
 
 	// initialize controllers
 	for(int i = 0; i < 2; i++)
 		writeCommand((DISPLAY_ON_CMD | ON), i);
 
 	// initialize frame buffer and clearout with 0's
-	framebuffer_size = (SCREEN_WIDTH * SCREEN_HEIGHT)/8;
-	framebuffer = new uint8_t[framebuffer_size];			// new? not c?
-	memset(framebuffer, 0, framebuffer_size);
+	myLCD.framebuffer_size = (myLCD.SCREEN_WIDTH * myLCD.SCREEN_HEIGHT)/8;
+	//myLCD.framebuffer = new uint8_t[framebuffer_size];			// new? not c?
+	myLCD.framebuffer = malloc(myLCD.framebuffer_size * sizeof(uint8_t));	// remember!! free(myLCD.framebuffer)
 	//std::fill_n(framebuffer,framebuffer_size, 0);
+	memset(myLCD.framebuffer, 0, myLCD.framebuffer_size);
 }
 
 
@@ -66,16 +74,16 @@ void init(void)
 void goTo(uint8_t x, uint8_t y)
 {
 	uint8_t i;
-	screen_x = x;
-	screen_y = y;
-	for(i = 0; i < SCREEN_WIDTH/64; i++)
+	myLCD.screen_x = x;
+	myLCD.screen_y = y;
+	for(i = 0; i < myLCD.SCREEN_WIDTH/64; i++)
 	{
-		writeCommand(DISPLAY_SET_Y | 0,i);
-		writeCommand(DISPLAY_SET_X | y,i);
-		writeCommand(DISPLAY_START_LINE | 0,i);
+		writeCommand(myLCD.DISPLAY_SET_Y | 0,i);
+		writeCommand(myLCD.DISPLAY_SET_X | y,i);
+		writeCommand(myLCD.DISPLAY_START_LINE | 0,i);
 	}
-	writeCommand(DISPLAY_SET_Y | (x % 64), (x / 64));
-	writeCommand(DISPLAY_SET_X | y, (x / 64));
+	writeCommand(myLCD.DISPLAY_SET_Y | (x % 64), (x / 64));
+	writeCommand(myLCD.DISPLAY_SET_X | y, (x / 64));
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -83,14 +91,14 @@ void goTo(uint8_t x, uint8_t y)
 //-------------------------------------------------------------------------------------------------
 void putData(uint8_t data)
 {
-	bcm2835_gpio_write(PIN_D0, (data >> 0) & 1 ) ;
-	bcm2835_gpio_write(PIN_D1, (data >> 1) & 1 ) ;
-	bcm2835_gpio_write(PIN_D2, (data >> 2) & 1 ) ;
-	bcm2835_gpio_write(PIN_D3, (data >> 3) & 1 ) ;
-	bcm2835_gpio_write(PIN_D4, (data >> 4) & 1 ) ;
-	bcm2835_gpio_write(PIN_D5, (data >> 5) & 1 ) ;
-	bcm2835_gpio_write(PIN_D6, (data >> 6) & 1 ) ;
-	bcm2835_gpio_write(PIN_D7, (data >> 7) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D0, (data >> 0) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D1, (data >> 1) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D2, (data >> 2) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D3, (data >> 3) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D4, (data >> 4) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D5, (data >> 5) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D6, (data >> 6) & 1 ) ;
+	bcm2835_gpio_write(myLCD.PIN_D7, (data >> 7) & 1 ) ;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -99,14 +107,14 @@ void putData(uint8_t data)
 void writeData(uint8_t dataToWrite)
 {
 	lcdDelay();
-	bcm2835_gpio_write(PIN_RS, HIGH);
+	bcm2835_gpio_write(myLCD.PIN_RS, HIGH);
 	putData(dataToWrite);
-	enableController(screen_x / 64);
-	bcm2835_gpio_write(PIN_EN, HIGH);
+	enableController(myLCD.screen_x / 64);
+	bcm2835_gpio_write(myLCD.PIN_EN, HIGH);
 	lcdDelay();
-	bcm2835_gpio_write(PIN_EN, LOW);
-	disableController(screen_x / 64);
-	screen_x++;
+	bcm2835_gpio_write(myLCD.PIN_EN, LOW);
+	disableController(myLCD.screen_x / 64);
+	myLCD.screen_x++;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -115,12 +123,12 @@ void writeData(uint8_t dataToWrite)
 void writeCommand(uint8_t commandToWrite, uint8_t controller)
 {
 	lcdDelay();
-	bcm2835_gpio_write(PIN_RS, LOW);
+	bcm2835_gpio_write(myLCD.PIN_RS, LOW);
 	enableController(controller);
 	putData(commandToWrite);
-	bcm2835_gpio_write(PIN_EN, HIGH);
+	bcm2835_gpio_write(myLCD.PIN_EN, HIGH);
 	lcdDelay();
-	bcm2835_gpio_write(PIN_EN, LOW);
+	bcm2835_gpio_write(myLCD.PIN_EN, LOW);
 	disableController(controller);
 }
 
@@ -138,8 +146,8 @@ void lcdDelay(void)
 void enableController(uint8_t controller)
 {
 	switch(controller){
-		case 0 : bcm2835_gpio_write(PIN_CS1, HIGH); break;
-		case 1 : bcm2835_gpio_write(PIN_CS2, HIGH); break;
+		case 0 : bcm2835_gpio_write(myLCD.PIN_CS1, HIGH); break;
+		case 1 : bcm2835_gpio_write(myLCD.PIN_CS2, HIGH); break;
 		default: break;
 	}
 }
@@ -147,8 +155,8 @@ void enableController(uint8_t controller)
 void disableController(uint8_t controller)
 {
 	switch(controller){
-		case 0 : bcm2835_gpio_write(PIN_CS1, LOW); break;
-		case 1 : bcm2835_gpio_write(PIN_CS2, LOW); break;
+		case 0 : bcm2835_gpio_write(myLCD.PIN_CS1, LOW); break;
+		case 1 : bcm2835_gpio_write(myLCD.PIN_CS2, LOW); break;
 		default: break;
 	}
 }
@@ -168,7 +176,7 @@ void clearScreen()
 //-------------------------------------------------------------------------------------------------
 void clearBuffer()
 {
-	memset(framebuffer, 0, framebuffer_size);
+	memset(myLCD.framebuffer, 0, myLCD.framebuffer_size);
 	//std::fill_n(framebuffer,framebuffer_size, 0);
 }
 
@@ -182,8 +190,8 @@ void syncBuffer()
 	for(j = 0; j < 8; j++)
 	{
 		goTo(0,j);
-		for(i = 0; i < SCREEN_WIDTH; i++)
-		writeData((uint8_t)framebuffer[counter++]);
+		for(i = 0; i < myLCD.SCREEN_WIDTH; i++)
+		writeData(/*(uint8_t)*/myLCD.framebuffer[counter++]);
 	}
 }
 
@@ -201,8 +209,8 @@ void wait(unsigned int millis)
 //-------------------------------------------------------------------------------------------------
 void setPixel(uint8_t x, uint8_t y)
 {
-	int idx = (SCREEN_WIDTH * (y/8)) + x;
-	framebuffer[idx] |= 1 << y%8;
+	int idx = (myLCD.SCREEN_WIDTH * (y/8)) + x;
+	myLCD.framebuffer[idx] |= 1 << y%8;
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -210,8 +218,8 @@ void setPixel(uint8_t x, uint8_t y)
 //-------------------------------------------------------------------------------------------------
 void clearPixel(uint8_t x, uint8_t y)
 {
-	int idx = (SCREEN_WIDTH * (y/8)) + x;
-	framebuffer[idx] &= ~(1 << y%8);
+	int idx = (myLCD.SCREEN_WIDTH * (y/8)) + x;
+	myLCD.framebuffer[idx] &= ~(1 << y%8);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -219,12 +227,12 @@ void clearPixel(uint8_t x, uint8_t y)
 //-------------------------------------------------------------------------------------------------
 void setPixels(uint8_t x, uint8_t y, uint8_t byte)
 {
-	int idx = (SCREEN_WIDTH * (y/8)) + x;
-	int idx2 = (SCREEN_WIDTH * ( (y/8)+1) ) + x;
+	int idx = (myLCD.SCREEN_WIDTH * (y/8)) + x;
+	int idx2 = (myLCD.SCREEN_WIDTH * ( (y/8)+1) ) + x;
 	uint8_t rest = y%8;
-	framebuffer[idx] |= ( byte << y%8 );
+	myLCD.framebuffer[idx] |= ( byte << y%8 );
 	if(rest)
-		framebuffer[idx2] |= byte >> (8-y%8);
+		myLCD.framebuffer[idx2] |= byte >> (8-y%8);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -259,7 +267,8 @@ void drawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t style){
 void drawLine(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1){
 	int dx = abs(x1-x0), sx = x0<x1 ? 1 : -1;
 	int dy = abs(y1-y0), sy = y0<y1 ? 1 : -1;
-	int err = (dx>dy ? dx : -dy)/2, e2;		// improve readability e2
+	int err = (dx>dy ? dx : -dy)/2, 
+		  e2;
 
 	for(;;){			// improve this?
 		setPixel(x0,y0);

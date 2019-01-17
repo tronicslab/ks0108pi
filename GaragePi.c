@@ -8,12 +8,13 @@
 
 #include "GaragePi.h"
 
-int initGPIOlib() {
+int initGaragePi() {
 	if (!bcm2835_init()){
 		printf("Failed to load bcm2835...\n");
 		return 1;
+	} else {
+		printf("Initialize bcm2835...success!\n");	
 	}
 
-	printf("Started bcm2835...\n");
 	return 0;
 }
