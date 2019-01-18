@@ -1,8 +1,8 @@
 CXX = g++
 CFLAGS = -I.
 LIBS = -lm -lbcm2835
-DEPS = Ks0108pi.h
-OBJ = main.o Ks0108pi.o
+DEPS = Ks0108pi.h GaragePi.h
+OBJ = main.o Ks0108pi.o GaragePi.o
 
 %.o: %.c $(DEPS)
 	$(CXX) -c -o $@ $< $(CFLAGS)
