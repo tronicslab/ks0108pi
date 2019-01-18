@@ -148,7 +148,7 @@ void enableController(uint8_t controller, Ks0108pi* myLCD) {
 	}
 }
 
-void disableController(uint8_t controller, myLCD) {
+void disableController(uint8_t controller, Ks0108pi* myLCD) {
 	switch(controller){
 		case 0 : bcm2835_gpio_write(myLCD->PIN_CS1, LOW); break;
 		case 1 : bcm2835_gpio_write(myLCD->PIN_CS2, LOW); break;
@@ -181,7 +181,7 @@ void syncBuffer(Ks0108pi* myLCD) {
 	int counter = 0;
 	for(j = 0; j < 8; j++)
 	{
-		goTo(0, j);
+		goTo(0, j, myLCD);
 		for(i = 0; i < myLCD->SCREEN_WIDTH; i++)
 		writeData(/*(uint8_t)*/myLCD->framebuffer[counter++], myLCD);
 	}
@@ -214,7 +214,7 @@ void clearPixel(uint8_t x, uint8_t y, Ks0108pi* myLCD) {
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void setPixels(uint8_t x, uint8_t y, uint8_t byte, , Ks0108pi* myLCD) {
+void setPixels(uint8_t x, uint8_t y, uint8_t byte, Ks0108pi* myLCD) {
 	int idx = (myLCD->SCREEN_WIDTH * (y / 8)) + x;
 	int idx2 = (myLCD->SCREEN_WIDTH * ( (y / 8) + 1) ) + x;
 	uint8_t rest = y % 8;
@@ -310,7 +310,7 @@ void writeChar(uint8_t x, uint8_t y, char charToWrite, uint8_t* font, Ks0108pi* 
 //-------------------------------------------------------------------------------------------------
 //
 //-------------------------------------------------------------------------------------------------
-void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font, , Ks0108pi* myLCD) {
+void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font, Ks0108pi* myLCD) {
 	while(*stringToWrite){
 		writeChar(x,y,*stringToWrite++, font, myLCD);
 		x+=font[2]+1;
@@ -322,20 +322,20 @@ void shiftBufferHorizontal(int x, Ks0108pi* myLCD) {
   uint8_t *originalfb = malloc(myLCD->framebuffer_size * sizeof(uint8_t));   // free(originalfb)
 
 	//backup of current framebuffer
-	memcpy(originalfb, myLCD->framebuffer, framebuffer_size * sizeof(uint8_t));
+	memcpy(originalfb, myLCD->framebuffer, myLCD->framebuffer_size * sizeof(uint8_t));
   //std::copy(myLCD.framebuffer, myLCD.framebuffer + myLCD.framebuffer_size, originalfb); // *** find C equivalent
-	clearBuffer(); // clear main framebuffer
+	clearBuffer(myLCD); // clear main framebuffer
 
 	int x_original;
 	int x_new;
 
 
 	// line scan
-	for(int y = 0; y < SCREEN_HEIGHT / 8; y++) 	{
+	for(int y = 0; y < myLCD->SCREEN_HEIGHT / 8; y++) 	{
 		//x scan
 		x_original = x < 0 ? x * -1 : 0;
 		x_new = x < 0 ? 0 : x ;
-		while(x_original < SCREEN_WIDTH && x_new < SCREEN_WIDTH) {
+		while(x_original < myLCD->SCREEN_WIDTH && x_new < myLCD->SCREEN_WIDTH) {
 			setPixels(x_new, y * 8, originalfb[ (y * myLCD->SCREEN_WIDTH) + x_original ], myLCD );	// *** Update to remove THIS
 			x_original++;
 			x_new++;
