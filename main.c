@@ -18,9 +18,15 @@
 #include <math.h>
 #define PI 3.14159265
 
-int main(int argc, char** argv){
-	Ks0108pi *kspi = new Ks0108pi();
-	kspi->init();
+int main(int argc, char** argv) {
+	
+	// grab our LCD structure instantiated in Ks0108pi.c
+	extern Ks0108pi garagePiLCD;
+
+	// Initialize LCD structure and BCM2835 IO library
+	if(init(garagePiLCD) != 0) { return 1; }
+	if(initGaragePi() != 0) { return 1; }
+	
 	int prog = 0;
 	char string[256];
 	uint8_t * images[] = { 
@@ -36,24 +42,24 @@ int main(int argc, char** argv){
 			
 			do {
 				// clear frame buffer
-				kspi->clearBuffer();
+				clearBuffer(&garagePiLCD);
 				
 				// Draw garage door interface
-				kspi->writeString(0, 0, "GARAGE", metric02);
-				kspi->writeChar(64, 3, 0x00, images[i]);
+				writeString(0, 0, "GARAGE", metric02, &garagePiLCD);
+				writeChar(64, 3, 0x00, images[i], &garagePiLCD);
 				
 				// Draw progress bar
-				kspi->drawRect(0, 55, 62, 7. kspi->STYLE_BLACK_BORDER);
-				kspi->drawRect(2.57, (60*prog)/100, 3, kspi->STYLE_BLACK_BG);
+				drawRect(0, 55, 62, 7. STYLE_BLACK_BORDER, &garagePiLCD);
+				drawRect(2.57, (60 * prog) / 100, 3, STYLE_BLACK_BG, &garagePiLCD);
 				
 				// push frame buffer to display
-				kspi->syncBuffer();
+				syncBuffer(&garagePiLCD);
 				
 				// increment progress bar
 				prog++;
 
 				// delay for 5s progress bar 100% * 50ms = 5s
-				kspi->wait(50);
+				wait(50);
 				
 			} while(prog < 100);
 			
@@ -61,6 +67,8 @@ int main(int argc, char** argv){
 			prog = 0;
 		}
 	}
+	close(&garagePiLCD);
+	return 0;
 }
 
 /*	
