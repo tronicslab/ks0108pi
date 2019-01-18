@@ -54,7 +54,7 @@ int init(Ks0108pi* myLCD) {
 	// initialize frame buffer and clearout with 0's
 	myLCD->framebuffer_size = (myLCD->SCREEN_WIDTH * myLCD->SCREEN_HEIGHT) / 8;
 	//myLCD.framebuffer = new uint8_t[framebuffer_size];			// new? not c?
-	myLCD->framebuffer = malloc(myLCD->framebuffer_size * sizeof(uint8_t));	// remember!! free(myLCD.framebuffer)
+	myLCD->framebuffer = (uint8_t*)malloc(myLCD->framebuffer_size * sizeof(uint8_t));	// remember!! free(myLCD.framebuffer)
   if(myLCD->framebuffer == NULL) { 
   	printf("Failed to create framebuffer!\n"); 
   	return 1; 
@@ -319,7 +319,7 @@ void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font, Ks01
 
 void shiftBufferHorizontal(int x, Ks0108pi* myLCD) {  
 	//uint8_t *originalfb = new uint8_t[framebuffer_size];	// NEW? not C?
-  uint8_t *originalfb = malloc(myLCD->framebuffer_size * sizeof(uint8_t));   // free(originalfb)
+  uint8_t *originalfb = (uint8_t*)malloc(myLCD->framebuffer_size * sizeof(uint8_t));   // free(originalfb)
 
 	//backup of current framebuffer
 	memcpy(originalfb, myLCD->framebuffer, myLCD->framebuffer_size * sizeof(uint8_t));

@@ -24,8 +24,8 @@ int main(int argc, char** argv) {
 	extern Ks0108pi garagePiLCD;
 
 	// Initialize LCD structure and BCM2835 IO library
-	if(init(&garagePiLCD) != 0) { return 1; }
 	if(initGaragePi() != 0) { return 1; }
+	if(init(&garagePiLCD) != 0) { return 1; }
 	
 	int prog = 0;
 	char string[256];
