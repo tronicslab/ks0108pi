@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
 	extern Ks0108pi garagePiLCD;
 
 	// Initialize LCD structure and BCM2835 IO library
-	if(init(garagePiLCD) != 0) { return 1; }
+	if(init(&garagePiLCD) != 0) { return 1; }
 	if(initGaragePi() != 0) { return 1; }
 	
 	int prog = 0;
@@ -49,8 +49,8 @@ int main(int argc, char** argv) {
 				writeChar(64, 3, 0x00, images[i], &garagePiLCD);
 				
 				// Draw progress bar
-				drawRect(0, 55, 62, 7. STYLE_BLACK_BORDER, &garagePiLCD);
-				drawRect(2.57, (60 * prog) / 100, 3, STYLE_BLACK_BG, &garagePiLCD);
+				drawRect(0, 55, 62, 7, STYLE_BLACK_BORDER, &garagePiLCD);
+				drawRect(2, 57, (60 * prog) / 100, 3, STYLE_BLACK_BG, &garagePiLCD);
 				
 				// push frame buffer to display
 				syncBuffer(&garagePiLCD);
