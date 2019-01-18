@@ -49,7 +49,7 @@ int init(Ks0108pi* myLCD) {
 
 	// initialize controllers
 	for(int i = 0; i < 2; i++)
-		writeCommand((DISPLAY_ON_CMD | ON), i);
+		writeCommand((myLCD->DISPLAY_ON_CMD | myLCD->ON), i, myLCD);
 
 	// initialize frame buffer and clearout with 0's
 	myLCD->framebuffer_size = (myLCD->SCREEN_WIDTH * myLCD->SCREEN_HEIGHT) / 8;
@@ -108,11 +108,11 @@ void writeData(uint8_t dataToWrite, Ks0108pi* myLCD) {
 	lcdDelay();
 	bcm2835_gpio_write(myLCD->PIN_RS, HIGH);
 	putData(dataToWrite, myLCD);
-	enableController(myLCD->screen_x / 64);
+	enableController(myLCD->screen_x / 64, myLCD);
 	bcm2835_gpio_write(myLCD->PIN_EN, HIGH);
 	lcdDelay();
 	bcm2835_gpio_write(myLCD->PIN_EN, LOW);
-	disableController(myLCD->screen_x / 64);
+	disableController(myLCD->screen_x / 64, myLCD);
 	myLCD->screen_x++;
 }
 
@@ -122,12 +122,12 @@ void writeData(uint8_t dataToWrite, Ks0108pi* myLCD) {
 void writeCommand(uint8_t commandToWrite, uint8_t controller, Ks0108pi* myLCD) {
 	lcdDelay();
 	bcm2835_gpio_write(myLCD->PIN_RS, LOW);
-	enableController(controller);
+	enableController(controller, myLCD);
 	putData(commandToWrite, myLCD);
 	bcm2835_gpio_write(myLCD->PIN_EN, HIGH);
 	lcdDelay();
 	bcm2835_gpio_write(myLCD->PIN_EN, LOW);
-	disableController(controller);
+	disableController(controller, myLCD);
 }
 
 //-------------------------------------------------------------------------------------------------

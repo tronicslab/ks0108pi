@@ -11,12 +11,12 @@
 typedef struct {
 
 	// static ks0108 commands
-	static const uint8_t DISPLAY_SET_Y;
-	static const uint8_t DISPLAY_SET_X;
-	static const uint8_t DISPLAY_START_LINE;
-	static const uint8_t DISPLAY_ON_CMD;
-	static const uint8_t ON;
-	static const uint8_t OFF;
+	const uint8_t DISPLAY_SET_Y;
+	const uint8_t DISPLAY_SET_X;
+	const uint8_t DISPLAY_START_LINE;
+	const uint8_t DISPLAY_ON_CMD;
+	const uint8_t ON;
+	const uint8_t OFF;
 
 	const int SCREEN_WIDTH;
 	const int SCREEN_HEIGHT;
