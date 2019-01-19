@@ -39,10 +39,10 @@ int main(int argc, char** argv) {
 	char * timeStr;
 	
 	// Set RPI GPIO 5/6 to be an input
-    bcm2835_gpio_fsel(GPIO5, BCM2835_GPIO_FSEL_INPT);
-    bcm2835_gpio_fsel(GPIO6, BCM2835_GPIO_FSEL_INPT);
-    // And a rising edge detect enable
-    bcm2835_gpio_ren(GPIO5);
+  bcm2835_gpio_fsel(GPIO5, BCM2835_GPIO_FSEL_INPT);
+  bcm2835_gpio_fsel(GPIO6, BCM2835_GPIO_FSEL_INPT);
+  // And a rising edge detect enable
+  bcm2835_gpio_ren(GPIO5);
 	bcm2835_gpio_ren(GPIO6);
 	
 	while(1) {
@@ -53,31 +53,33 @@ int main(int argc, char** argv) {
 				clearBuffer(&garagePiLCD);
 				
 				// check our inputs
-				if(bcm2835_gpio_eds_multi(1 << GPIO5 | 1 << GPIO6)) {
+				if(bcm2835_gpio_eds_multi( (1 << GPIO5) | (1 << GPIO6) )) {
 					// Determine which button was pushed and clear eds flag by setting to 1
 					if(bcm2835_gpio_eds(GPIO5)) {
 						whichSwitch = 1;
 						bcm2835_gpio_set_eds(GPIO5);
-					} else {
+					} else if (bcm2835_gpio_eds(GPIO6)) {
 						whichSwitch = 2;
 						bcm2835_gpio_set_eds(GPIO6);
+					} else {
+						whichSwitch = 0;
 					}
 				}
 				writeString(0, 28, doorSensor[whichSwitch], metric01, &garagePiLCD);
 				
 				// Draw our current time
 				timeStr = getTime();
-				writeString(0, 38, timeStr, metric01, &garagePiLCD);
+				writeString(0, 57, timeStr, metric01, &garagePiLCD);
 				
 				// Draw garage door interface
 				writeString(0, 0, "GARAGE", metric02, &garagePiLCD);
 				writeString(0, 15, doorStatus[i], metric02, &garagePiLCD);
-				writeChar(78, 3, 0x00, images[i], &garagePiLCD);
+				writeChar(78, 0, 0x00, images[i], &garagePiLCD);
 				
 				// Draw progress bar
-				writeString(0, 48, "Please wait...", metric01, &garagePiLCD);
-				drawRect(0, 55, 62, 7, STYLE_BLACK_BORDER, &garagePiLCD);
-				drawRect(2, 57, (60 * prog) / 100, 3, STYLE_BLACK_BG, &garagePiLCD);
+				writeString(0, 40, "Please wait...", metric01, &garagePiLCD);
+				drawRect(0, 48, 62, 7, STYLE_BLACK_BORDER, &garagePiLCD);
+				drawRect(2, 50, (60 * prog) / 100, 3, STYLE_BLACK_BG, &garagePiLCD);
 				
 				// push frame buffer to display
 				syncBuffer(&garagePiLCD);
