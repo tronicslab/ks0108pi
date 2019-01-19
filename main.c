@@ -73,11 +73,11 @@ int main(int argc, char** argv) {
 				
 				// Draw garage door interface
 				writeString(0, 0, "GARAGE", metric02, &garagePiLCD);
-				writeString(0, 15, doorStatus[i], metric02, &garagePiLCD);
+				writeString(0, 17, doorStatus[i], metric02, &garagePiLCD);
 				writeChar(78, 0, 0x00, images[i], &garagePiLCD);
 				
 				// Draw progress bar
-				writeString(0, 40, "Please wait...", metric01, &garagePiLCD);
+				writeString(0, 38, "Please wait...", metric01, &garagePiLCD);
 				drawRect(0, 48, 62, 7, STYLE_BLACK_BORDER, &garagePiLCD);
 				drawRect(2, 50, (60 * prog) / 100, 3, STYLE_BLACK_BG, &garagePiLCD);
 				
