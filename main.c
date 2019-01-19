@@ -2,13 +2,11 @@
 #include <stdlib.h>
 #include "Ks0108pi.h"
 #include "GaragePi.h"
-//
+
 #include "fonts/metric01.h"
 #include "fonts/metric02.h"
 #include "fonts/metric04.h"
-//
-#include "fonts/pbar.h"
-#include "fonts/batticon.h"
+
 #include "fonts/garageclosed.h"
 #include "fonts/garageopen.h"
 #include "fonts/garageclosing.h"
@@ -16,7 +14,12 @@
 #include "fonts/garageerror.h"
 
 #include <math.h>
+#include <time.h>
 #define PI 3.14159265
+#define GPIO5 5
+#define GPIO6 6
+
+char * getTime(void);
 
 int main(int argc, char** argv) {
 	
@@ -29,13 +32,18 @@ int main(int argc, char** argv) {
 	
 	int prog = 0;
 	char string[256];
-	uint8_t * images[] = { 
-													garageclosed, 
-													garageopen, 
-													garageclosing, 
-													garageopening, 
-													garageerror
-												};
+	uint8_t * images[] = { garageclosed, garageopen, garageclosing, garageopening, garageerror };
+	char * doorStatus[5] = {"CLOSED", "OPEN", "OPENING", "CLOSING", "ERROR"};
+	char * doorSensor[3] = {"No switch", "Closed switch", "Open switch"};
+	uint8_t whichSwitch = 0;
+	char * timeStr;
+	
+	// Set RPI GPIO 5/6 to be an input
+    bcm2835_gpio_fsel(GPIO5, BCM2835_GPIO_FSEL_INPT);
+    bcm2835_gpio_fsel(GPIO6, BCM2835_GPIO_FSEL_INPT);
+    // And a rising edge detect enable
+    bcm2835_gpio_ren(GPIO5);
+	bcm2835_gpio_ren(GPIO6);
 	
 	while(1) {
 		for(int i=0; i < ( sizeof(images) / sizeof(images[0]) ); i++) {
@@ -44,11 +52,30 @@ int main(int argc, char** argv) {
 				// clear frame buffer
 				clearBuffer(&garagePiLCD);
 				
+				// check our inputs
+				if(bcm2835_gpio_eds_multi(1 << GPIO5 | 1 << GPIO6)) {
+					// Determine which button was pushed and clear eds flag by setting to 1
+					if(bcm2835_gpio_eds(GPIO5)) {
+						whichSwitch = 1;
+						bcm2835_gpio_set_eds(GPIO5);
+					} else {
+						whichSwitch = 2;
+						bcm2835_gpio_set_eds(GPIO6);
+					}
+				}
+				writeString(0, 28, doorSensor[whichSwitch], metric01, &garagePiLCD);
+				
+				// Draw our current time
+				timeStr = getTime();
+				writeString(0, 38, timeStr, metric01, &garagePiLCD);
+				
 				// Draw garage door interface
 				writeString(0, 0, "GARAGE", metric02, &garagePiLCD);
-				writeChar(64, 3, 0x00, images[i], &garagePiLCD);
+				writeString(0, 15, doorStatus[i], metric02, &garagePiLCD);
+				writeChar(78, 3, 0x00, images[i], &garagePiLCD);
 				
 				// Draw progress bar
+				writeString(0, 48, "Please wait...", metric01, &garagePiLCD);
 				drawRect(0, 55, 62, 7, STYLE_BLACK_BORDER, &garagePiLCD);
 				drawRect(2, 57, (60 * prog) / 100, 3, STYLE_BLACK_BG, &garagePiLCD);
 				
@@ -56,10 +83,10 @@ int main(int argc, char** argv) {
 				syncBuffer(&garagePiLCD);
 				
 				// increment progress bar
-				prog++;
+				prog += 8;
 
 				// delay for 5s progress bar 100% * 50ms = 5s
-				wait(50);
+				wait(200);
 				
 			} while(prog < 100);
 			
@@ -67,8 +94,14 @@ int main(int argc, char** argv) {
 			prog = 0;
 		}
 	}
-	close(&garagePiLCD);
+	// must call to free our allocated memory (framebuffer & BCM2835)
+	close_BCM(&garagePiLCD);
 	return 0;
+}
+
+char * getTime() {
+	time_t rawTime = time(NULL); 
+	return asctime(localtime(&rawTime));
 }
 
 /*	

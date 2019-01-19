@@ -53,13 +53,11 @@ int init(Ks0108pi* myLCD) {
 
 	// initialize frame buffer and clearout with 0's
 	myLCD->framebuffer_size = (myLCD->SCREEN_WIDTH * myLCD->SCREEN_HEIGHT) / 8;
-	//myLCD.framebuffer = new uint8_t[framebuffer_size];			// new? not c?
 	myLCD->framebuffer = (uint8_t*)malloc(myLCD->framebuffer_size * sizeof(uint8_t));	// remember!! free(myLCD.framebuffer)
   if(myLCD->framebuffer == NULL) { 
   	printf("Failed to create framebuffer!\n"); 
   	return 1; 
   }
-	//std::fill_n(framebuffer,framebuffer_size, 0);
 	memset(myLCD->framebuffer, 0, myLCD->framebuffer_size);
   return 0; // all good
 }
@@ -67,8 +65,11 @@ int init(Ks0108pi* myLCD) {
 //-------------------------------------------------------------------------------------------------
 //	Free our allocated memory for the framebuffer
 //-------------------------------------------------------------------------------------------------
-void close(Ks0108pi* myLCD) {
+void close_BCM(Ks0108pi* myLCD) {
 	free(myLCD->framebuffer);
+	if(!bcm2835_close()) {
+		printf("Failed to close bcm2835...\n");
+	}
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -170,7 +171,6 @@ void clearScreen(Ks0108pi* myLCD) {
 //-------------------------------------------------------------------------------------------------
 void clearBuffer(Ks0108pi* myLCD) {
 	memset(myLCD->framebuffer, 0, myLCD->framebuffer_size);
-	//std::fill_n(framebuffer,framebuffer_size, 0);
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -183,7 +183,7 @@ void syncBuffer(Ks0108pi* myLCD) {
 	{
 		goTo(0, j, myLCD);
 		for(i = 0; i < myLCD->SCREEN_WIDTH; i++)
-		writeData(/*(uint8_t)*/myLCD->framebuffer[counter++], myLCD);
+		writeData(myLCD->framebuffer[counter++], myLCD);
 	}
 }
 
@@ -318,13 +318,11 @@ void writeString(uint8_t x, uint8_t y, char * stringToWrite, uint8_t* font, Ks01
 }
 
 void shiftBufferHorizontal(int x, Ks0108pi* myLCD) {  
-	//uint8_t *originalfb = new uint8_t[framebuffer_size];	// NEW? not C?
-  uint8_t *originalfb = (uint8_t*)malloc(myLCD->framebuffer_size * sizeof(uint8_t));   // free(originalfb)
+	uint8_t *originalfb = (uint8_t*)malloc(myLCD->framebuffer_size * sizeof(uint8_t));   // free(originalfb)
 
 	//backup of current framebuffer
 	memcpy(originalfb, myLCD->framebuffer, myLCD->framebuffer_size * sizeof(uint8_t));
-  //std::copy(myLCD.framebuffer, myLCD.framebuffer + myLCD.framebuffer_size, originalfb); // *** find C equivalent
-	clearBuffer(myLCD); // clear main framebuffer
+  clearBuffer(myLCD); // clear main framebuffer
 
 	int x_original;
 	int x_new;

@@ -50,7 +50,7 @@ enum DrawStyle {
 	STYLE_BLACK_BORDER = 1 << 4,
 };
 
-void close(Ks0108pi* myLCD);
+void close_BCM(Ks0108pi* myLCD);
 void goTo(uint8_t x, uint8_t y, Ks0108pi *myLCD);
 void putData(uint8_t data, Ks0108pi *myLCD);
 void writeData(uint8_t dataToWrite, Ks0108pi *myLCD);

@@ -1,14 +1,24 @@
-CXX = g++
-CFLAGS = -I.
-LIBS = -lm -lbcm2835
-DEPS = Ks0108pi.h GaragePi.h
-OBJ = main.o Ks0108pi.o GaragePi.o
+TARGET = main
+LIBS = -l bcm2835 -lm
+CC = gcc
+CFLAGS = -g -Wall
 
-%.o: %.c $(DEPS)
-	$(CXX) -c -o $@ $< $(CFLAGS)
+.PHONY: default all clean
 
-main: $(OBJ)
-	$(CXX) -o $@ $^ $(CFLAGS) $(LIBS)
+default: $(TARGET)
+all: default
+
+OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
+HEADERS = $(wildcard *.h)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+.PRECIOUS: $(TARGET) $(OBJECTS)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
-	rm main.o main
+	-rm -f *.o
+	-rm -f $(TARGET)
